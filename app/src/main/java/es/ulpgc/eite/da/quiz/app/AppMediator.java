@@ -43,6 +43,8 @@ public class AppMediator {
     return questionState;
   }
 
+  public void setQuestionState(QuestionState state){this.questionState = state;}
+
   public void setCheatToQuestionState(CheatToQuestionState state) {
     cheatToQuestionState = state;
   }

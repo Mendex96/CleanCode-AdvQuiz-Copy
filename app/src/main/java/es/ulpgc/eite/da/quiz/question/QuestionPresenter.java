@@ -46,8 +46,10 @@ public class QuestionPresenter implements QuestionContract.Presenter {
   @Override
   public void onRestart() {
     Log.e(TAG, "onRestart()");
-
-    //TODO: falta implementacion
+  state = mediator.getQuestionState();
+  model.setQuizIndex(state.quizIndex);
+  boolean isCorrect = model.isCorrectOption(state.option);
+  view.get().updateReply(isCorrect);
 
   }
 
@@ -56,17 +58,15 @@ public class QuestionPresenter implements QuestionContract.Presenter {
   public void onResume() {
     Log.e(TAG, "onResume()");
 
-    //TODO: falta implementacion
 
     // use passed state if is necessary
     CheatToQuestionState savedState = getStateFromCheatScreen();
     if (savedState != null) {
-
-      // fetch the model
+      onNextButtonClicked();
     }
 
-    // update the view
     view.get().displayQuestion(state);
+
   }
 
 
@@ -78,43 +78,58 @@ public class QuestionPresenter implements QuestionContract.Presenter {
   @Override
   public void onOptionButtonClicked(int option) {
     Log.e(TAG, "onOptionButtonClicked()");
-
-    //TODO: falta implementacion
-
+    state.optionClicked = true;
+    state.optionEnabled = false;
+    enableNextButton();
+    state.option = option;
     boolean isCorrect = model.isCorrectOption(option);
     if(isCorrect) {
       state.cheatEnabled=false;
     } else {
       state.cheatEnabled=true;
     }
+    view.get().displayQuestion(state);
+    view.get().updateReply(isCorrect);
 
   }
 
   @Override
   public void onNextButtonClicked() {
     Log.e(TAG, "onNextButtonClicked()");
-
-    //TODO: falta implementacion
+    model.updateQuizIndex();
+    state.quizIndex = model.getQuizIndex();
+    state.question = model.getQuestion();
+    state.option1 = model.getOption1();
+    state.option2 = model.getOption2();
+    state.option3 = model.getOption3();
+    state.option = 0;
+    disableNextButton();
+    view.get().displayQuestion(state);
+    view.get().resetReply();
+    mediator.setQuestionState(state);
   }
 
   @Override
   public void onCheatButtonClicked() {
     Log.e(TAG, "onCheatButtonClicked()");
-
-    //TODO: falta implementacion
+    QuestionToCheatState questionToCheatState = new QuestionToCheatState();
+    if (model.isCorrectOption(1)){
+      questionToCheatState.answer = model.getOption1();
+    }else if(model.isCorrectOption(2)){
+      questionToCheatState.answer = model.getOption2();
+    }else{
+      questionToCheatState.answer = model.getOption3();
+    }
+    passStateToCheatScreen(questionToCheatState);
+    view.get().navigateToCheatScreen();
   }
 
   private void passStateToCheatScreen(QuestionToCheatState state) {
-
-    //TODO: falta implementacion
-
+    mediator.setQuestionToCheatState(state);
   }
 
   private CheatToQuestionState getStateFromCheatScreen() {
-
-    //TODO: falta implementacion
-
-    return null;
+    return mediator.getCheatToQuestionState();
   }
 
   private void disableNextButton() {
