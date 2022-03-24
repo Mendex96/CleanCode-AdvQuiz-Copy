@@ -47,9 +47,11 @@ public class QuestionPresenter implements QuestionContract.Presenter {
   public void onRestart() {
     Log.e(TAG, "onRestart()");
   state = mediator.getQuestionState();
-  model.setQuizIndex(state.quizIndex);
-  boolean isCorrect = model.isCorrectOption(state.option);
-  view.get().updateReply(isCorrect);
+  if(state.optionClicked) {
+    model.setQuizIndex(state.quizIndex);
+    boolean isCorrect = model.isCorrectOption(state.option);
+    view.get().updateReply(isCorrect);}else{view.get().resetReply();}
+
 
   }
 
@@ -102,10 +104,10 @@ public class QuestionPresenter implements QuestionContract.Presenter {
     state.option1 = model.getOption1();
     state.option2 = model.getOption2();
     state.option3 = model.getOption3();
-    state.option = 0;
     disableNextButton();
     view.get().displayQuestion(state);
     view.get().resetReply();
+    state.optionClicked = false;
     mediator.setQuestionState(state);
   }
 

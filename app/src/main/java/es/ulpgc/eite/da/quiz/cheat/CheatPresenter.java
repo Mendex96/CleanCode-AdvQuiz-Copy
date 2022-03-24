@@ -44,27 +44,27 @@ public class CheatPresenter implements CheatContract.Presenter {
   public void onRestart() {
     Log.e(TAG, "onRestart()");
 
-    //TODO: falta implementacion
+    state = mediator.getCheatState();
+    view.get().displayAnswer(state);
   }
 
   @Override
   public void onResume() {
     Log.e(TAG, "onResume()");
 
-    //TODO: falta implementacion
+
 
     // use passed state if is necessary
     QuestionToCheatState savedState = getStateFromQuestionScreen();
     if (savedState != null) {
-
       // fetch the model
-
+      model.setAnswer(savedState.answer);
       // update the state
-
+      state.answer = savedState.answer;
     }
 
     // update the view
-    view.get().displayAnswer(state);
+    //view.get().displayAnswer(state);
 
   }
 
@@ -76,30 +76,34 @@ public class CheatPresenter implements CheatContract.Presenter {
   @Override
   public void onBackPressed() {
     Log.e(TAG, "onBackPressed()");
-
-    //TODO: falta implementacion
-
+    CheatToQuestionState cheatToQuestionState = new CheatToQuestionState();
+    cheatToQuestionState.answerCheated = state.answerCheated;
+    passStateToQuestionScreen(cheatToQuestionState);
   }
 
   @Override
   public void onWarningButtonClicked(int option) {
     Log.e(TAG, "onWarningButtonClicked()");
 
-    //TODO: falta implementacion
-    //option=1 => yes, option=0 => no
 
+    //option=1 => yes, option=0 => no
+    if (option==1){
+      state.answerCheated = true;
+      mediator.setCheatState(state);
+      state.answerEnabled =false;
+      view.get().displayAnswer(state);
+    }
+    else{
+      view.get().onFinish();
+    }
   }
 
   private void passStateToQuestionScreen(CheatToQuestionState state) {
-
-    //TODO: falta implementacion
+    mediator.setCheatToQuestionState(state);
   }
 
   private QuestionToCheatState getStateFromQuestionScreen() {
-
-    //TODO: falta implementacion
-
-    return null;
+    return mediator.getQuestionToCheatState();
   }
 
   @Override
