@@ -45,8 +45,11 @@ public class CheatPresenter implements CheatContract.Presenter {
     Log.e(TAG, "onRestart()");
 
     state = mediator.getCheatState();
-    view.get().displayAnswer(state);
-  }
+    if(state.answerCheated) {
+      view.get().displayAnswer(state);
+    }else {
+      view.get().resetAnswer();
+    }  }
 
   @Override
   public void onResume() {

@@ -64,7 +64,13 @@ public class QuestionPresenter implements QuestionContract.Presenter {
     // use passed state if is necessary
     CheatToQuestionState savedState = getStateFromCheatScreen();
     if (savedState != null) {
-      onNextButtonClicked();
+      if(!model.hasQuizFinished()){
+      onNextButtonClicked();}
+      else{
+        enableNextButton();
+
+      }
+
     }
 
     view.get().displayQuestion(state);
